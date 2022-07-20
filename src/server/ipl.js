@@ -15,11 +15,13 @@ const deliveryData = finalDatadeliveries["data"];
 
 function matchedPlayedPerYear(matchData){
     return matchData.reduce((finalValue, currentValue) => {
+        if(currentValue['id']!==''){
      if (finalValue[currentValue.season]) {
           finalValue[currentValue.season]++;
      } else {
           finalValue[currentValue.season] = 1;
      }
+    }
      return finalValue;
 }, {});
 }
@@ -32,3 +34,6 @@ FileSystem.writeFile('/home/prasan/IPL/src/public/output/matchesPerTeam.json', J
         console.log("File statement.");
     }
 });
+
+
+
