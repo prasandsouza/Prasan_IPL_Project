@@ -98,3 +98,42 @@ FileSystem.writeFile('/home/prasan/IPL/src/public/output/extraRunGiven.json', JS
         console.log("File statement.");
     }
 });
+
+function topEconomicalBowler(){
+    let seasonMatch2015 = matchData.reduce((accumulator, currentValue) => {
+        if (currentValue.season == 2015) {
+             return [...accumulator, parseInt(currentValue["id"])];
+        }
+        return accumulator;
+   }, []);
+   
+   let besteconomy = deliveryData.reduce((accumulator,currentValue)=>{
+       if (seasonMatch2015.includes(parseInt(currentValue.match_id))){
+           if (accumulator[currentValue.bowler]) {
+               accumulator[currentValue.bowler]['runs_conceded'] += parseInt(currentValue.total_runs);
+               accumulator[currentValue.bowler]['total_balls']++;
+               accumulator[currentValue.bowler]['economy'] = (accumulator[currentValue.bowler]['runs_conceded'] / ((accumulator[currentValue.bowler]['total_balls']) / 6)).toFixed(2);
+           }else{
+               accumulator[currentValue.bowler] = {};
+               accumulator[currentValue.bowler]['runs_conceded'] = parseInt(currentValue.total_runs);
+               accumulator[currentValue.bowler]['total_balls'] = 1;
+           }
+       }  
+       return accumulator         
+   },{})
+   
+   let topEconomicalBowler = Object.fromEntries(Object.entries(besteconomy).sort((a, b) => a[1].economy - b[1].economy).slice(0, 10).filter(bowler => {
+       bowler[1] = parseFloat( bowler[1].economy)
+       return true;
+   }));
+  return topEconomicalBowler
+}
+const topTenBowler = topEconomicalBowler()
+FileSystem.writeFile('/home/prasan/IPL/src/public/output/TopTenEconomicaBowler.json', JSON.stringify(topTenBowler), (data, error) => {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log("File statement.");
+    }
+});
