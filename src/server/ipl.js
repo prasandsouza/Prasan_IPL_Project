@@ -65,6 +65,36 @@ function winnerperseason(){
         }
     });
 
+function extraRunConceededfunction(){
+
+let season2016 = matchData.reduce((accumulator, currentValue) => {
+    if (currentValue.season == 2016) {
+         return [...accumulator, parseInt(currentValue["id"])];
+    }
+    return accumulator;
+}, []);
 
 
-    
+let extrarunconceeded = deliveryData.reduce((accumulator,currentValue)=>{
+   if(season2016.includes(parseInt(currentValue.match_id))){
+       if(accumulator[currentValue.bowling_team]){
+           accumulator[currentValue.bowling_team] += parseInt(currentValue.extra_runs)
+       }else{
+           accumulator[currentValue.bowling_team] = parseInt(currentValue.extra_runs)
+       }
+   }
+   return accumulator
+},{})
+return extrarunconceeded
+
+}
+const extraRunGiven = extraRunConceededfunction()
+
+FileSystem.writeFile('/home/prasan/IPL/src/public/output/extraRunGiven.json', JSON.stringify(extraRunGiven), (data, error) => {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log("File statement.");
+    }
+});
