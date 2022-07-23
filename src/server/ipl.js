@@ -221,9 +221,50 @@ FileSystem.writeFile('/home/prasan/IPL/src/public/output/tossWinnerAndMatchWinne
     }
 });
 
+function strikeRate(){
+     let player = deliveryData.filter(PlayerData=>{
 
+          return PlayerData.batsman === "MS Dhoni"
+     })
+     
+     let seasonData = player.map((seasonwise)=> {
+          let year = matchData.filter((yearWise)=> {
+               return yearWise.id===seasonwise.match_id
+          })
+          .map((yearWise)=> {
+               return yearWise.season
+          })
+          seasonwise.season = year[0]
+          return seasonwise
+     })
+     
+     console.log("MS Dhoni")
+     let StrikeRateOfBatsMAn = seasonData.reduce((accumulator,currentValue)=> {
+          if(!currentValue.match_id ==" "){
+                if(accumulator[currentValue.season]){
+                    accumulator[currentValue.season]["runs"] += parseInt(currentValue.batsman_runs)
+                    accumulator[currentValue.season]['balls'] ++
+                    accumulator[currentValue.season]['StrikeRate'] = parseFloat((accumulator[currentValue.season]['runs']/accumulator[currentValue.season]['balls'])*100).toFixed(2)
+                } else {
+                    accumulator[currentValue.season] = {}
+                    accumulator[currentValue.season]['runs'] = parseInt(currentValue.batsman_runs)
+                    accumulator[currentValue.season]['balls'] = 1
+               }
+          }
+          return accumulator
+     },{})
 
-
+     return StrikeRateOfBatsMAn
+}
+let StrikeRateOfBatsman = strikeRate()
+FileSystem.writeFile('/home/prasan/IPL/src/public/output/strikeRateOfBatsMan.json', JSON.stringify(StrikeRateOfBatsman), (data, error) => {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log("File statement.");
+    }
+});
 
 function superoverEconomy(){
     let superOverBowler = deliveryData.reduce((accumulator,currentValue)=>{
