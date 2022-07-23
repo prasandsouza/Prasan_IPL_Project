@@ -220,3 +220,49 @@ FileSystem.writeFile('/home/prasan/IPL/src/public/output/tossWinnerAndMatchWinne
         console.log("File statement.");
     }
 });
+
+
+
+
+
+function superoverEconomy(){
+    let superOverBowler = deliveryData.reduce((accumulator,currentValue)=>{
+        if(!currentValue.match_id==""){
+             if(currentValue.is_super_over!=0){
+                  if(accumulator[currentValue.bowler]){
+                       accumulator[currentValue.bowler]['run'] += parseInt(currentValue.total_runs);
+                       accumulator[currentValue.bowler]['ball']++;
+                       accumulator[currentValue.bowler]['SuperOverEconomy'] = parseFloat(((accumulator[currentValue.bowler]['run']/(accumulator[currentValue.bowler]['ball']/6))).toFixed(2))
+   
+                  }else{
+                       accumulator[currentValue.bowler]= {}
+                       accumulator[currentValue.bowler]['run'] = parseInt(currentValue.total_runs);
+                       accumulator[currentValue.bowler]['ball'] = 1
+                  }
+             }
+        }
+        return accumulator
+   },{})
+   
+   let topEconomicalBowler = Object.fromEntries(Object.entries(superOverBowler).sort((firstValue,secondvalue)=>{
+        if(firstValue[1].SuperOverEconomy >secondvalue[1].SuperOverEconomy){
+             return 1;
+        }
+        else{
+             return -1
+        }
+   }).slice(0,1).filter(bowler => {
+           bowler[1] = parseFloat( bowler[1].SuperOverEconomy)
+           return true;
+       }));
+   return topEconomicalBowler;
+}
+let superOverEconomyBowler = superoverEconomy()
+FileSystem.writeFile('/home/prasan/IPL/src/public/output/topEconomicalBowlerInSuperOver.json', JSON.stringify(superOverEconomyBowler), (data, error) => {
+    if (error) {
+        console.log(error);
+    }
+    else {
+        console.log("File statement.");
+    }
+});
